@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon compte à rebours RSA 2025</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #ffffff;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #ffcc00;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        header img {
+            width: 100px;
+            margin-right: 20px;
+        }
+        header h1 {
+            font-size: 1.8em;
+            color: #333;
+        }
+        main {
+            padding: 20px;
+            position: relative;
+            flex: 1;
+        }
+        #countdown {
+            font-size: 2.5em;
+            margin-top: 10vh;
+            color: #ffcc00;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        #next-rsa-date {
+            font-size: 1.2em;
+            margin-top: 10px;
+            color: #ffffff;
+        }
+        #celebration-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+        }
+        #celebration {
+            position: absolute;
+            color: #ffcc00;
+            font-size: 4em;
+            text-align: center;
+            animation: fadeIn 2s ease-in-out;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        footer {
+            padding: 10px;
+            background: #333;
+            color: #fff;
+            text-align: center;
+            font-size: 0.9em;
+            margin-top: auto;
+        }
+        a {
+            color: #ffcc00;
+            text-decoration: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            #countdown {
+                font-size: 1.8em;
+            }
+            #celebration {
+                font-size: 3em;
+            }
+        }
+        @media (max-width: 480px) {
+            #countdown {
+                font-size: 1.5em;
+            }
+            #celebration {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <img src="https://upload.wikimedia.org/wikipedia/fr/thumb/c/cb/Caisse_d_allocations_familiales_france_logo.svg/2070px-Caisse_d_allocations_familiales_france_logo.svg.png" alt="Logo CAF">
+        <h1>Mon compte à rebours RSA 2025</h1>
+    </header>
+    <main>
+        <div id="countdown"></div>
+        <div id="next-rsa-date"></div>
+        <div id="celebration-container">
+            <canvas id="fireworks"></canvas>
+            <div id="celebration">🎆 C'est le jour du RSA ! 🎇</div>
+        </div>
+    </main>
+    <footer>
+        © 2025 Mon compte à rebours RSA - <a href="https://www.caf.fr" target="_blank">Site officiel de la CAF</a>
+    </footer>
+
+    <audio id="fireworks-audio" src="https://cdn.pixabay.com/download/audio/2022/03/09/audio_f59d3f4a98.mp3?filename=fireworks-29629.mp3" preload="auto" loop autoplay></audio>
+
+    <script>
+        const rsaDates = [
+            new Date('2025-01-06T00:00:00'),
+            new Date('2025-02-05T00:00:00'),
+            new Date('2025-03-05T00:00:00'),
+            new Date('2025-04-04T00:00:00'),
+            new Date('2025-05-05T00:00:00'),
+            new Date('2025-06-05T00:00:00'),
+            new Date('2025-07-04T00:00:00'),
+            new Date('2025-08-05T00:00:00'),
+            new Date('2025-09-05T00:00:00'),
+            new Date('2025-10-06T00:00:00'),
+            new Date('2025-11-05T00:00:00'),
+            new Date('2025-12-05T00:00:00')
+        ];
+
+        const countdownElement = document.getElementById('countdown');
+        const nextRsaDateElement = document.getElementById('next-rsa-date');
+        const celebrationContainer = document.getElementById('celebration-container');
+        const canvas = document.getElementById('fireworks');
+        const ctx = canvas.getContext('2d');
+        const fireworksAudio = document.getElementById('fireworks-audio');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function isSameDay(date1, date2) {
+            return (
+                date1.getFullYear() === date2.getFullYear() &&
+                date1.getMonth() === date2.getMonth() &&
+                date1.getDate() === date2.getDate()
+            );
+        }
+
+        function updateCountdown() {
+            const now = new Date();
+            const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000 - 1); // End of the day
+
+            const currentRSADate = rsaDates.find(date => date >= todayStart && date <= todayEnd);
+
+            if (currentRSADate) {
+                countdownElement.style.display = 'none';
+                nextRsaDateElement.style.display = 'none';
+                celebrationContainer.style.display = 'flex';
+                fireworksAudio.play();
+                launchFireworks();
+                return;
+            }
+
+            celebrationContainer.style.display = 'none'; // Ensure celebration is hidden
+            countdownElement.style.display = 'block'; // Ensure countdown is visible
+
+            const nextRSADate = rsaDates.find(date => date > now);
+
+            if (!nextRSADate) {
+                countdownElement.textContent = "Pas de prochaines dates disponibles.";
+                nextRsaDateElement.textContent = "";
+                return;
+            }
+
+            const diff = nextRSADate - now;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            countdownElement.textContent = `Prochain versement du RSA dans ${days} jours, ${hours} heures, ${minutes} minutes et ${seconds} secondes.`;
+            nextRsaDateElement.textContent = `Date du prochain versement : ${nextRSADate.toLocaleDateString('fr-FR')}`;
+        }
+
+        function launchFireworks() {
+            let particles = [];
+
+            function createExplosion(x, y, color) {
+                const particleCount = 50;
+                for (let i = 0; i < particleCount; i++) {
+                    particles.push({
+                        x,
+                        y,
+                        xVel: Math.cos((Math.PI * 2 * i) / particleCount) * Math.random() * 4,
+                        yVel: Math.sin((Math.PI * 2 * i) / particleCount) * Math.random() * 4,
+                        life: 150,
+                        color
+                    });
+                }
+            }
+
+            function renderParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                particles.forEach((particle, index) => {
+                    particle.x += particle.xVel;
+                    particle.y += particle.yVel;
+                    particle.life--;
+
+                    if (particle.life <= 0) {
+                        particles.splice(index, 1);
+                    } else {
+                        ctx.fillStyle = particle.color;
+                        ctx.beginPath();
+                        ctx.arc(particle.x, particle.y, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                });
+
+                requestAnimationFrame(renderParticles);
+            }
+
+            setInterval(() => {
+                const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height / 2;
+                createExplosion(x, y, color);
+            }, 500);
+
+            renderParticles();
+        }
+
+        setTimeout(() => {
+            if (celebrationContainer.style.display === 'flex') {
+                launchFireworks();
+            }
+        }, 500);
+
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
